@@ -1,11 +1,6 @@
 package com.example.demo.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,7 +26,13 @@ public class Reader {
     private LocalDate cardCreatedDate;
     private LocalDate cardExpiredDate;
     private String cardStatus;
-    private Integer borrowingBookCount;
+    private Integer currentBorrowedCount;
+    private String phone;
+    private String studentCodeOrCitizenId;
+
+    @ManyToOne
+    @JoinColumn(name = "borrowing_rule_id")
+    private com.example.demo.domain.BorrowingRule borrowingRule;
 
     @OneToMany(mappedBy = "reader")
     private List<BorrowReceipt> borrowReceipts = new ArrayList<>();

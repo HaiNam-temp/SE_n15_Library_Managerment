@@ -31,6 +31,8 @@ public class Book {
     private String publisher;
     private String status;
     private LocalDate importedDate;
+    private String isbn;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "book_category_id")
