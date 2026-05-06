@@ -39,7 +39,9 @@ CREATE TABLE IF NOT EXISTS borrowing_rule (
 
 CREATE TABLE IF NOT EXISTS book_category (
   id BIGSERIAL PRIMARY KEY,
-  category_name VARCHAR(255)
+  category_name VARCHAR(255) NOT NULL UNIQUE,
+  description VARCHAR(500),
+  status VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS book (
