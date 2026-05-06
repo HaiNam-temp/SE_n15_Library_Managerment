@@ -3,6 +3,7 @@ import { ReaderService } from '../services/ReaderService';
 
 export default function ReaderList() {
   const [readers, setReaders] = useState([]);
+  const [showForm, setShowForm] = useState(false);
   const [page, setPage] = useState(0);
   const [size] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
@@ -11,6 +12,7 @@ export default function ReaderList() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [editingId, setEditingId] = useState(null);
+  const [viewing, setViewing] = useState(null);
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -29,7 +31,7 @@ export default function ReaderList() {
       setReaders(res.content || []);
       setTotalPages(res.totalPages || 0);
     } catch (err) {
-      setErrorMessage(extractErrorMessage(err, 'Khong the tai danh sach doc gia.'));
+      setErrorMessage(extractErrorMessage(err, 'Không thể tải danh sách độc giả.'));
     } finally {
       setIsLoading(false);
     }
@@ -54,6 +56,7 @@ export default function ReaderList() {
       dateOfBirth: ''
     });
     setEditingId(null);
+    setShowForm(false);
   }
 
   function handleInputChange(event) {
@@ -80,16 +83,16 @@ export default function ReaderList() {
     try {
       if (editingId) {
         await ReaderService.updateReader(editingId, payload);
-        setSuccessMessage('Cap nhat doc gia thanh cong.');
+        setSuccessMessage('Cập nhật độc giả thành công.');
       } else {
         await ReaderService.createReader(payload);
-        setSuccessMessage('Them doc gia thanh cong.');
+        setSuccessMessage('Thêm độc giả thành công.');
       }
 
       resetForm();
       await fetchReaders(page, size);
     } catch (err) {
-      setErrorMessage(extractErrorMessage(err, 'Khong the luu doc gia.'));
+      setErrorMessage(extractErrorMessage(err, 'Không thể lưu độc giả.'));
     } finally {
       setIsSaving(false);
     }
@@ -101,6 +104,7 @@ export default function ReaderList() {
     try {
       const detail = await ReaderService.getReaderDetail(readerId);
       setEditingId(readerId);
+      setShowForm(true);
       setForm({
         fullName: detail.fullName || '',
         email: detail.email || '',
@@ -111,12 +115,12 @@ export default function ReaderList() {
         dateOfBirth: detail.dateOfBirth || ''
       });
     } catch (err) {
-      setErrorMessage(extractErrorMessage(err, 'Khong the tai chi tiet doc gia.'));
+      setErrorMessage(extractErrorMessage(err, 'Không thể tải chi tiết độc giả.'));
     }
   }
 
   async function handleDelete(readerId) {
-    const isConfirmed = window.confirm('Ban co chac chan muon xoa doc gia nay?');
+    const isConfirmed = window.confirm('Bạn có chắc chắn muốn xóa độc giả này?');
     if (!isConfirmed) {
       return;
     }
@@ -125,7 +129,7 @@ export default function ReaderList() {
     setSuccessMessage('');
     try {
       await ReaderService.deleteReader(readerId);
-      setSuccessMessage('Xoa doc gia thanh cong.');
+      setSuccessMessage('Xóa độc giả thành công.');
       if (editingId === readerId) {
         resetForm();
       }
@@ -138,7 +142,7 @@ export default function ReaderList() {
         await fetchReaders(page, size);
       }
     } catch (err) {
-      setErrorMessage(extractErrorMessage(err, 'Khong the xoa doc gia.'));
+      setErrorMessage(extractErrorMessage(err, 'Không thể xóa độc giả.'));
     }
   }
 
@@ -148,60 +152,75 @@ export default function ReaderList() {
 
   return (
     <section className="reader-panel">
-      <form className="reader-form" onSubmit={handleSubmit}>
-        <h2>{editingId ? 'Cap nhat doc gia' : 'Them doc gia'}</h2>
+      <div className="reader-actions">
+        <button className="btn btn-primary" onClick={() => { setShowForm(true); setEditingId(null); }}>
+          Thêm mới độc giả
+        </button>
+        <button className="btn" onClick={() => fetchReaders(page, size)}>
+          Làm mới danh sách
+        </button>
+      </div>
 
-        <div className="form-grid">
-          <label>
-            Ho va ten *
-            <input name="fullName" value={form.fullName} onChange={handleInputChange} required />
-          </label>
+      { (showForm || editingId) && (
+        <div className="modal" role="dialog" onClick={() => setShowForm(false)}>
+          <div className="modal-card form-card" onClick={(e) => e.stopPropagation()}>
+            <form className="reader-form" onSubmit={handleSubmit}>
+              <h2>{editingId ? 'Cập nhật độc giả' : 'Thêm độc giả'}</h2>
 
-          <label>
-            Email *
-            <input name="email" type="email" value={form.email} onChange={handleInputChange} required />
-          </label>
+              <div className="form-grid">
+                <label>
+                  Họ và tên *
+                  <input name="fullName" value={form.fullName} onChange={handleInputChange} required />
+                </label>
 
-          <label>
-            Ma SV / CCCD *
-            <input
-              name="studentCodeOrCitizenId"
-              value={form.studentCodeOrCitizenId}
-              onChange={handleInputChange}
-              required
-            />
-          </label>
+                <label>
+                  Email *
+                  <input name="email" type="email" value={form.email} onChange={handleInputChange} required />
+                </label>
 
-          <label>
-            So dien thoai
-            <input name="phone" value={form.phone} onChange={handleInputChange} />
-          </label>
+                <label>
+                  Mã SV / CCCD *
+                  <input
+                    name="studentCodeOrCitizenId"
+                    value={form.studentCodeOrCitizenId}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </label>
 
-          <label>
-            Gioi tinh
-            <input name="gender" value={form.gender} onChange={handleInputChange} />
-          </label>
+                <label>
+                  Số điện thoại
+                  <input name="phone" value={form.phone} onChange={handleInputChange} />
+                </label>
 
-          <label>
-            Ngay sinh
-            <input name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleInputChange} />
-          </label>
+                <label>
+                  Giới tính
+                  <input name="gender" value={form.gender} onChange={handleInputChange} />
+                </label>
 
-          <label className="full-width">
-            Dia chi
-            <input name="address" value={form.address} onChange={handleInputChange} />
-          </label>
+                <label>
+                  Ngày sinh
+                  <input name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleInputChange} />
+                </label>
+
+                <label className="full-width">
+                  Địa chỉ
+                  <input name="address" value={form.address} onChange={handleInputChange} />
+                </label>
+              </div>
+
+              <div className="form-actions">
+                <button className="btn btn-primary" type="submit" disabled={isSaving}>
+                  {isSaving ? 'Đang lưu...' : editingId ? 'Lưu cập nhật' : 'Thêm mới'}
+                </button>
+                <button className="btn" type="button" onClick={resetForm} disabled={isSaving}>
+                  Làm mới
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-
-        <div className="form-actions">
-          <button className="btn btn-primary" type="submit" disabled={isSaving}>
-            {isSaving ? 'Dang luu...' : editingId ? 'Luu cap nhat' : 'Them moi'}
-          </button>
-          <button className="btn" type="button" onClick={resetForm} disabled={isSaving}>
-            Lam moi
-          </button>
-        </div>
-      </form>
+      )}
 
       {(errorMessage || successMessage) && (
         <div className="message-box">
@@ -212,20 +231,20 @@ export default function ReaderList() {
 
       <div className="toolbar">
         <button className="btn" onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={!canGoPrev || isLoading}>
-          Prev
+          Trước
         </button>
         <span>
-          Page {page + 1} / {displayedTotalPages}
+          Trang {page + 1} / {displayedTotalPages}
         </span>
         <button
           className="btn"
           onClick={() => setPage((p) => p + 1)}
           disabled={!canGoNext || isLoading}
         >
-          Next
+          Tiếp
         </button>
         <button className="btn" onClick={() => fetchReaders(page, size)} disabled={isLoading}>
-          {isLoading ? 'Dang tai...' : 'Tai lai'}
+          {isLoading ? 'Đang tải...' : 'Tải lại'}
         </button>
       </div>
 
@@ -234,19 +253,19 @@ export default function ReaderList() {
           <thead>
             <tr>
               <th>#</th>
-              <th>Ho ten</th>
+              <th>Họ tên</th>
               <th>Email</th>
               <th>Ma SV / CCCD</th>
-              <th>Trang thai</th>
-              <th>Thao tac</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
             </tr>
           </thead>
           <tbody>
             {readers.length === 0 ? (
               <tr>
                 <td colSpan={6} className="empty-row">
-                  Khong co du lieu doc gia.
-                </td>
+                    Không có dữ liệu độc giả.
+                  </td>
               </tr>
             ) : (
               readers.map((r, idx) => (
@@ -258,11 +277,17 @@ export default function ReaderList() {
                   <td>{r.accountStatus || 'N/A'}</td>
                   <td>
                     <div className="row-actions">
-                      <button className="btn btn-secondary" onClick={() => handleEdit(r.id)}>
-                        Sua
+                      <button className="btn btn-ghost" onClick={() => setViewing(r)} title="Xem chi tiết">
+                        <span className="icon">🔍</span>
+                        Xem
                       </button>
-                      <button className="btn btn-danger" onClick={() => handleDelete(r.id)}>
-                        Xoa
+                      <button className="btn btn-secondary" onClick={() => handleEdit(r.id)} title="Sửa">
+                        <span className="icon">✏️</span>
+                        Sửa
+                      </button>
+                      <button className="btn btn-danger" onClick={() => handleDelete(r.id)} title="Xóa">
+                        <span className="icon">🗑️</span>
+                        Xóa
                       </button>
                     </div>
                   </td>
@@ -272,6 +297,29 @@ export default function ReaderList() {
           </tbody>
         </table>
       </div>
+
+      {viewing && (
+        <div className="modal" role="dialog" onClick={() => setViewing(null)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <h3>Chi tiết độc giả</h3>
+            <dl>
+              <dt>Họ và tên</dt>
+              <dd>{viewing.fullName}</dd>
+              <dt>Email</dt>
+              <dd>{viewing.email}</dd>
+              <dt>Ma SV / CCCD</dt>
+              <dd>{viewing.studentCodeOrCitizenId}</dd>
+              <dt>Số điện thoại</dt>
+              <dd>{viewing.phone}</dd>
+              <dt>Địa chỉ</dt>
+              <dd>{viewing.address}</dd>
+            </dl>
+            <div style={{ textAlign: 'right' }}>
+              <button className="btn" onClick={() => setViewing(null)}>Đóng</button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
