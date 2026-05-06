@@ -20,6 +20,8 @@ public interface CategoryRepository extends JpaRepository<BookCategory, Long> {
 
     Optional<BookCategory> findByIdAndStatus(Long id, CategoryStatus status);
 
+    Optional<BookCategory> findByIsDefaultTrueAndStatus(CategoryStatus status);
+
     Page<BookCategory> findAllByStatus(CategoryStatus status, Pageable pageable);
 
     long countByStatus(CategoryStatus status);

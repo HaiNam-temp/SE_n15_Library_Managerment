@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository;
 public interface BookRepository extends JpaRepository<Book, Long> {
 
     long countByBookCategory(BookCategory bookCategory);
+
+    boolean existsByIsbn(String isbn);
+
+    boolean existsByIsbnAndIdNot(String isbn, Long id);
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import LeftSidebar from './components/LeftSidebar';
 import ReaderList from './components/ReaderList';
+import BookList from './components/BookList';
 
 export default function App() {
   const [view, setView] = useState('home');
@@ -25,6 +26,7 @@ export default function App() {
           )}
 
           {view === 'readers' && <ReaderList />}
+          {view === 'books' && <BookList />}
         </main>
       </div>
     </div>

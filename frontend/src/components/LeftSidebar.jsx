@@ -10,7 +10,6 @@ export default function LeftSidebar({ active, onNavigate }) {
           onClick={() => onNavigate('home')}
         >
           <span className="icon" aria-hidden>
-            
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 11.5L12 4l9 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M5 20.5V12h14v8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -31,8 +30,20 @@ export default function LeftSidebar({ active, onNavigate }) {
           </span>
           Quản lý độc giả
         </button>
+
+        <button
+          className={"nav-item " + (active === 'books' ? 'active' : '')}
+          onClick={() => onNavigate('books')}
+        >
+          <span className="icon" aria-hidden>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </span>
+          Quản lý sách
+        </button>
       </nav>
     </aside>
   );
 }
-
