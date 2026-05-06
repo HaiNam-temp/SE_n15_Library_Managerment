@@ -41,3 +41,4 @@ public class Reader {
     @OneToMany(mappedBy = "reader")
     private List<BorrowReceipt> borrowReceipts = new ArrayList<>();
 }
+
