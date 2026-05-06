@@ -30,6 +30,10 @@ public class Reader {
     private String phone;
     private String studentCodeOrCitizenId;
 
+    @OneToOne
+    @JoinColumn(name = "account_id")
+    private com.example.demo.domain.Account account;
+
     @ManyToOne
     @JoinColumn(name = "borrowing_rule_id")
     private com.example.demo.domain.BorrowingRule borrowingRule;
@@ -37,3 +41,4 @@ public class Reader {
     @OneToMany(mappedBy = "reader")
     private List<BorrowReceipt> borrowReceipts = new ArrayList<>();
 }
+
