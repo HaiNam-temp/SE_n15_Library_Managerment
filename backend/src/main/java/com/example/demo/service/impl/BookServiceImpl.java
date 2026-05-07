@@ -130,7 +130,9 @@ public class BookServiceImpl implements BookService {
             throw new IllegalStateException("Sách đang được mượn, không thể xóa.");
         }
 
-        bookRepository.delete(book);
+//        bookRepository.delete(book);
+        book.setStatus("DELETED");
+        bookRepository.save(book);
 
         ActivityLog activityLog = new ActivityLog();
         activityLog.setAction("Delete Book");
