@@ -158,73 +158,78 @@ export default function CategoryList() {
 
             {/* Form */}
             {showForm && (
-                <div className="card">
-                    <h3>{editingId ? 'Cập nhật danh mục' : 'Thêm danh mục mới'}</h3>
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label htmlFor="categoryName">Tên danh mục *</label>
-                            <input
-                                type="text"
-                                id="categoryName"
-                                name="categoryName"
-                                value={form.categoryName}
-                                onChange={handleInputChange}
-                                placeholder="Nhập tên danh mục"
-                                required
-                            />
-                        </div>
+                <div className="modal" role="dialog" onClick={resetForm}>
+                    <div className="modal-card form-card" onClick={(e) => e.stopPropagation()}>
+                        <form className="category-form" onSubmit={handleSubmit}>
+                            <h3>{editingId ? 'Cập nhật danh mục' : 'Thêm danh mục mới'}</h3>
 
-                        <div className="form-group">
-                            <label htmlFor="description">Mô tả</label>
-                            <textarea
-                                id="description"
-                                name="description"
-                                value={form.description}
-                                onChange={handleInputChange}
-                                placeholder="Nhập mô tả danh mục"
-                                rows="3"
-                            />
-                        </div>
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label htmlFor="categoryName">Tên danh mục *</label>
+                                    <input
+                                        type="text"
+                                        id="categoryName"
+                                        name="categoryName"
+                                        value={form.categoryName}
+                                        onChange={handleInputChange}
+                                        placeholder="Nhập tên danh mục"
+                                        required
+                                    />
+                                </div>
 
-                        <div className="form-group">
-                            <label htmlFor="status">Trạng thái</label>
-                            <select
-                                id="status"
-                                name="status"
-                                value={form.status}
-                                onChange={handleInputChange}
-                            >
-                                <option value="ACTIVE">Hoạt động</option>
-                                <option value="INACTIVE">Không hoạt động</option>
-                            </select>
-                        </div>
+                                <div className="form-group">
+                                    <label htmlFor="status">Trạng thái</label>
+                                    <select
+                                        id="status"
+                                        name="status"
+                                        value={form.status}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="ACTIVE">Hoạt động</option>
+                                        <option value="INACTIVE">Không hoạt động</option>
+                                    </select>
+                                </div>
 
-                        <div className="form-group">
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    name="isDefault"
-                                    checked={form.isDefault}
-                                    onChange={handleInputChange}
-                                />
-                                Đây là danh mục mặc định
-                            </label>
-                        </div>
+                                <div className="form-group full-width">
+                                    <label htmlFor="description">Mô tả</label>
+                                    <textarea
+                                        id="description"
+                                        name="description"
+                                        value={form.description}
+                                        onChange={handleInputChange}
+                                        placeholder="Nhập mô tả danh mục"
+                                        rows="3"
+                                    />
+                                </div>
 
-                        <div className="form-actions">
-                            <button type="submit" className="btn btn-success" disabled={isSaving}>
-                                {isSaving ? 'Đang lưu...' : 'Lưu'}
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-secondary"
-                                onClick={resetForm}
-                                disabled={isSaving}
-                            >
-                                Hủy
-                            </button>
-                        </div>
-                    </form>
+                                <div className="form-group checkbox-group full-width">
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="isDefault"
+                                            checked={form.isDefault}
+                                            onChange={handleInputChange}
+                                        />
+                                        Đây là danh mục mặc định
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="form-actions">
+                                <button type="submit" className="btn btn-success" disabled={isSaving}>
+                                    {isSaving ? 'Đang lưu...' : 'Lưu'}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={resetForm}
+                                    disabled={isSaving}
+                                >
+                                    Hủy
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             )}
 
